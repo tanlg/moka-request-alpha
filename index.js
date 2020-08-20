@@ -5030,13 +5030,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 var globalConfig = getDefaultConfig();
-var _globalConfig = globalConfig,
-    errCodeWithMsg = _globalConfig.errCodeWithMsg,
-    codeToMessage = _globalConfig.codeToMessage,
-    beforeHookPrefix = _globalConfig.beforeHookPrefix,
-    afterSuccessHookPrefix = _globalConfig.afterSuccessHookPrefix,
-    afterFailedHookPrefix = _globalConfig.afterFailedHookPrefix,
-    defaultToastPrefix = _globalConfig.defaultToastPrefix;
 
 var src_MokaRequest = /*#__PURE__*/function () {
   /**
@@ -5057,7 +5050,7 @@ var src_MokaRequest = /*#__PURE__*/function () {
         query = _ref.query,
         dispatch = _ref.dispatch,
         _ref$toastPrefix = _ref.toastPrefix,
-        toastPrefix = _ref$toastPrefix === void 0 ? defaultToastPrefix : _ref$toastPrefix,
+        toastPrefix = _ref$toastPrefix === void 0 ? globalConfig.defaultToastPrefix : _ref$toastPrefix,
         _ref$withSuccessToast = _ref.withSuccessToast,
         withSuccessToast = _ref$withSuccessToast === void 0 ? false : _ref$withSuccessToast,
         _ref$withErrorToast = _ref.withErrorToast,
@@ -5115,7 +5108,7 @@ var src_MokaRequest = /*#__PURE__*/function () {
       var _this = this;
 
       if (this.withLoadingToast && this.dispatch) {
-        this.dispatch(globalConfig.loadingToast(this.toastPrefix + ' ' + beforeHookPrefix, this.id));
+        this.dispatch(globalConfig.loadingToast(this.toastPrefix + ' ' + globalConfig.beforeHookPrefix, this.id));
       } // 添加当前的 socket.id 到 header，辅助后端直接发到信息当前的 tab
 
 
@@ -5144,7 +5137,7 @@ var src_MokaRequest = /*#__PURE__*/function () {
     key: "afterSuccessHook",
     value: function afterSuccessHook(res) {
       if (this.withSuccessToast && this.dispatch) {
-        this.dispatch(globalConfig.successToast(this.toastPrefix + afterSuccessHookPrefix, this.id));
+        this.dispatch(globalConfig.successToast(this.toastPrefix + globalConfig.afterSuccessHookPrefix, this.id));
       }
 
       return res.body.data;
@@ -5168,18 +5161,18 @@ var src_MokaRequest = /*#__PURE__*/function () {
       var defaultErrMsg = err.response && err.response.body && err.response.body.msg;
       var errMsg = '';
 
-      if (errCodeWithMsg.includes(errCode)) {
+      if (globalConfig.errCodeWithMsg.includes(errCode)) {
         errMsg = err.response && err.response.body && err.response.body.data && err.response.body.data.locationDesc;
       }
 
-      var reason = codeToMessage(errCode, errMsg, defaultErrMsg); // 这是为了方便后端同志调查bug，因为现在所有接口即使报错status也是200，无法从chrome开发者工具里快速发现报错的接口了
+      var reason = globalConfig.codeToMessage(errCode, errMsg, defaultErrMsg); // 这是为了方便后端同志调查bug，因为现在所有接口即使报错status也是200，无法从chrome开发者工具里快速发现报错的接口了
 
       if (!isAborted && err.response) {
         console.error('MokaRequest Error: ', err.response.req.method, err.response.req.url);
       }
 
       if (this.withErrorToast && this.dispatch && !isAborted) {
-        this.dispatch(globalConfig.errorToast(this.toastPrefix + ' ' + afterFailedHookPrefix + reason, this.id));
+        this.dispatch(globalConfig.errorToast(this.toastPrefix + ' ' + globalConfig.afterFailedHookPrefix + reason, this.id));
       }
 
       throw Object.assign(err, {
