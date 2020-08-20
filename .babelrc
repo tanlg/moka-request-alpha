@@ -7,7 +7,7 @@
           "node": "current",
           "browsers": "since 2012"
         },
-        "useBuiltIns": true
+        "useBuiltIns": "usage"
       }
     ]
   ],
