@@ -1,6 +1,6 @@
 # test-moka-request
 
-```Javascript
+```javascript
 /**
  * A Promise-styled XHR util class powered by superagent ;)
  *

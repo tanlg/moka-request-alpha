@@ -2,57 +2,19 @@ import qs from 'qs';
 import superagent from 'superagent';
 import get from 'lodash/get';
 
-import { errCodeWithMsg, codeToMessage } from './errorCode';
 import { getDefaultConfig } from './config';
-import { getI18n } from './i18n';
-
-const i18n = getI18n();
 
 let globalConfig = getDefaultConfig();
-/**
- * A Promise-styled XHR util class powered by superagent ;)
- *
- * Support GET/PUT/POST/DELETE methods.
- * Support loading/success/error toasts. (requires redux toast middleware)
- *
- * The back-end response structure should be:
- *
- * {
- *   code: number, // response status code, not http status code
- *   msg: string, // response status message
- *   data: object // response payload
- * }
- *
- * Reference wiki link: https://wiki.mokahr.com/pages/viewpage.action?pageId=21964235
- *
- * Life cycle:
- *
- *                    +------------+
- *                    | beforeHook |
- *                    +------+-----+
- *                           |
- *                           v
- *                +---------------------+
- *                | get/put/post/delete |
- *                +----------+----------+
- *                           |
- *                           v
- *                   +---------------+
- *          +--------| checkResponse |--------+
- *          |        +---------------+        |
- *          |                                 |
- *          | success                         | failed
- *          v                                 v
- * +------------------+              +-----------------+
- * | afterSuccessHook |              | afterFailedHook |
- * +--------+---------+              +--------+--------+
- *          | (resolve data)                  | (throw err)
- *          v                                 v
- *       +------+                         +-------+
- *       | then | (your logic)            | catch | (your logic)
- *       +------+                         +-------+
- *
- */
+
+const {
+  errCodeWithMsg,
+  codeToMessage,
+  beforeHookPrefix,
+  afterSuccessHookPrefix,
+  afterFailedHookPrefix,
+  defaultToastPrefix,
+} = globalConfig;
+
 class MokaRequest {
   /**
    * Constructor
@@ -72,7 +34,7 @@ class MokaRequest {
     {
       query,
       dispatch,
-      toastPrefix = i18n.t`操作`,
+      toastPrefix = defaultToastPrefix,
       withSuccessToast = false,
       withErrorToast = false,
       withLoadingToast = false,
@@ -156,7 +118,7 @@ class MokaRequest {
    */
   beforeHook() {
     if (this.withLoadingToast && this.dispatch) {
-      this.dispatch(globalConfig.loadingToast(this.toastPrefix + ' ' + i18n.t`中...`, this.id));
+      this.dispatch(globalConfig.loadingToast(this.toastPrefix + ' ' + beforeHookPrefix, this.id));
     }
 
     // 添加当前的 socket.id 到 header，辅助后端直接发到信息当前的 tab
@@ -189,7 +151,7 @@ class MokaRequest {
    */
   afterSuccessHook(res) {
     if (this.withSuccessToast && this.dispatch) {
-      this.dispatch(globalConfig.successToast(this.toastPrefix + i18n.t`成功`, this.id));
+      this.dispatch(globalConfig.successToast(this.toastPrefix + afterSuccessHookPrefix, this.id));
     }
 
     return res.body.data;
@@ -225,10 +187,7 @@ class MokaRequest {
     }
     if (this.withErrorToast && this.dispatch && !isAborted) {
       this.dispatch(
-        globalConfig.errorToast(
-          this.toastPrefix + ' ' + i18n.t`失败` + i18n.t`：` + reason,
-          this.id
-        )
+        globalConfig.errorToast(this.toastPrefix + ' ' + afterFailedHookPrefix + reason, this.id)
       );
     }
 
