@@ -6,15 +6,6 @@ import { getDefaultConfig } from './config';
 
 let globalConfig = getDefaultConfig();
 
-const {
-  errCodeWithMsg,
-  codeToMessage,
-  beforeHookPrefix,
-  afterSuccessHookPrefix,
-  afterFailedHookPrefix,
-  defaultToastPrefix,
-} = globalConfig;
-
 class MokaRequest {
   /**
    * Constructor
@@ -34,7 +25,7 @@ class MokaRequest {
     {
       query,
       dispatch,
-      toastPrefix = defaultToastPrefix,
+      toastPrefix = globalConfig.defaultToastPrefix,
       withSuccessToast = false,
       withErrorToast = false,
       withLoadingToast = false,
@@ -118,7 +109,9 @@ class MokaRequest {
    */
   beforeHook() {
     if (this.withLoadingToast && this.dispatch) {
-      this.dispatch(globalConfig.loadingToast(this.toastPrefix + ' ' + beforeHookPrefix, this.id));
+      this.dispatch(
+        globalConfig.loadingToast(this.toastPrefix + ' ' + globalConfig.beforeHookPrefix, this.id)
+      );
     }
 
     // 添加当前的 socket.id 到 header，辅助后端直接发到信息当前的 tab
@@ -151,7 +144,9 @@ class MokaRequest {
    */
   afterSuccessHook(res) {
     if (this.withSuccessToast && this.dispatch) {
-      this.dispatch(globalConfig.successToast(this.toastPrefix + afterSuccessHookPrefix, this.id));
+      this.dispatch(
+        globalConfig.successToast(this.toastPrefix + globalConfig.afterSuccessHookPrefix, this.id)
+      );
     }
 
     return res.body.data;
@@ -172,14 +167,14 @@ class MokaRequest {
     const errCode = err.response && err.response.body && err.response.body.code;
     const defaultErrMsg = err.response && err.response.body && err.response.body.msg;
     let errMsg = '';
-    if (errCodeWithMsg.includes(errCode)) {
+    if (globalConfig.errCodeWithMsg.includes(errCode)) {
       errMsg =
         err.response &&
         err.response.body &&
         err.response.body.data &&
         err.response.body.data.locationDesc;
     }
-    const reason = codeToMessage(errCode, errMsg, defaultErrMsg);
+    const reason = globalConfig.codeToMessage(errCode, errMsg, defaultErrMsg);
 
     // 这是为了方便后端同志调查bug，因为现在所有接口即使报错status也是200，无法从chrome开发者工具里快速发现报错的接口了
     if (!isAborted && err.response) {
@@ -187,7 +182,10 @@ class MokaRequest {
     }
     if (this.withErrorToast && this.dispatch && !isAborted) {
       this.dispatch(
-        globalConfig.errorToast(this.toastPrefix + ' ' + afterFailedHookPrefix + reason, this.id)
+        globalConfig.errorToast(
+          this.toastPrefix + ' ' + globalConfig.afterFailedHookPrefix + reason,
+          this.id
+        )
       );
     }
 
