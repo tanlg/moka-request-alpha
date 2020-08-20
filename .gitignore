@@ -1,0 +1,59 @@
+node_modules
+.DS_Store
+.directory
+*.orig
+*.log
+*.zip
+
+*.swp
+
+src/server/public/javascripts
+src/server/public/stylesheets
+uploads/
+/dist/
+/distServer/
+src/lingui/
+.jshintrc
+.prettierrc
+.agignore
+
+src/server/config/local.js
+webpack.dev.entry_filter.js
+scripts/incomplete.log
+lingui-result.html
+
+.idea/
+.vscode/
+.vs/
+
+output
+
+# build cache
+.happypack/
+.cache/
+
+*.lock
+
+*.heapsnapshot
+dump.rdb
+
+# React-Styleguidist
+styleguide/
+
+# mysql data
+mydata/
+
+# post release scripts history
+env/
+
+# local jsconfig.json
+jsconfig.json
+
+# For building build-env docker image
+/id_rsa
+
+# ssl
+ssl/
+
+# mage-i18n repo
+mage-i18n/

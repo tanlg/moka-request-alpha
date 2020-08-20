@@ -1,0 +1,43 @@
+{
+  "name": "moka-request-alpha",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint src",
+    "test": "jest",
+    "test:w": "jest --watch",
+    "prebuild": "npm run lint && npm test",
+    "microbundle": "microbundle --sourcemap=false",
+    "build": "NODE_ENV=production webpack --config webpack.config.js --mode production",
+    "release": "sh ./scripts/release.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tanlg/moka-request-alpha.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-decorators": "^7.10.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.1.0",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-macros": "^2.8.0",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-moka": "0.0.9",
+    "global": "^4.4.0",
+    "jest": "^26.1.0",
+    "lingui-i18n": "^1.3.4",
+    "lodash": "^4.17.19",
+    "qs": "^6.9.4",
+    "superagent": "^5.3.1",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}
